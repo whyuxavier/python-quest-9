@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Квест: Алгоритмізація і програмування</title>
+<style>
+:root{--bg:#0f1226;--card:#1a1f3d;--tx:#e8ebff;--mu:#9aa3d6;--ac:#6c8cff;--ok:#38d996;--wa:#ffb84d;--er:#ff5c7a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 20% 0,#26307a,var(--bg) 60%);color:var(--tx);min-height:100vh;padding:16px}
+.w{max-width:760px;margin:0 auto}h1{font-size:1.5rem;margin:.2em 0}
+.card{background:var(--card);border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 6px 24px #0006}
+input,button{font:inherit}input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid #3a4280;background:#10143a;color:var(--tx);margin:6px 0}
+button{background:var(--ac);color:#fff;border:0;padding:10px 18px;border-radius:10px;cursor:pointer;margin:4px 4px 4px 0}
+button:disabled{opacity:.5;cursor:default}button.g{background:#2b3270}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--mu);font-size:.9rem}
+.bar{height:10px;background:#10143a;border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ok));width:0;transition:.4s}
+.xp{font-size:1.3rem;font-weight:700;color:var(--wa)}
+.opt{display:block;width:100%;text-align:left;background:#252b57;margin:6px 0;font-family:Consolas,monospace}
+.opt.sel{outline:2px solid var(--ac)}.opt.ok{background:#17614a}.opt.bad{background:#7a2236}
+pre{background:#0a0d26;padding:12px;border-radius:10px;overflow-x:auto;margin:10px 0;line-height:1.7}
+pre input[type=text]{width:9ch;min-width:0;display:inline-block;margin:0 2px;padding:1px 6px;font:inherit;vertical-align:baseline}
+.ln{display:block;cursor:pointer;padding:0 6px;border-radius:5px}.ln:hover{background:#2b3270}.ln.ok{background:#17614a}.ln.bad{background:#7a2236}
+.fb{padding:10px;border-radius:10px;margin-top:10px}.fb.ok{background:#17614a}.fb.wa{background:#6b4d12}.fb.er{background:#7a2236}
+.tag{display:inline-block;background:#2b3270;border-radius:8px;padding:2px 8px;font-size:.8rem;margin-right:6px}.hard{background:#7a2236}
+.hint{color:var(--wa);margin-top:8px}table{width:100%;border-collapse:collapse}td{padding:5px;border-bottom:1px solid #2b3270}
+@media print{body{background:#fff;color:#000}.card{box-shadow:none;border:1px solid #999;background:#fff}button{display:none}}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const LV=[
+{n:21,t:"Випадкові числа",k:[
+{t:"test",q:"Що поверне random.randint(1, 6)?",o:["Дійсне число від 1 до 6","Ціле число від 1 до 6 включно","Ціле число від 1 до 5","Ціле число від 0 до 6"],a:1,e:"randint(a, b) повертає ціле число від a до b включно."},
+{t:"fill",hard:1,q:"Допишіть код: підключіть модуль і згенеруйте число від 10 до 20.",c:"___ random\nn = random.___(10, 20)",a:[["import"],["randint"]],h:"1-й пропуск — одне з: import, include, from, using. 2-й — одне з: randint, randrange, choice, random.",e:"import random, потім random.randint(10, 20)."}]},
+{n:22,t:"Цикли",k:[
+{t:"multi",q:"Які цикли виведуть числа 1 2 3? (оберіть усі правильні)",o:["for i in range(1, 4): print(i)","for i in range(3): print(i)","for i in range(3): print(i + 1)","for i in range(1, 3): print(i)"],a:[0,2],e:"range(1, 4) дає 1,2,3; range(3) дає 0,1,2, тому потрібен i + 1."},
+{t:"bug",hard:1,q:"Програма має знайти суму чисел від 1 до 5. Знайдіть рядок з помилкою.",c:"total = 0\nfor i in range(1, 6)\n    total = total + i\nprint(total)",a:1,h:"Подивіться на кінець заголовка циклу.",e:"Після заголовка for потрібна двокрапка."}]},
+{n:23,t:"Списки",k:[
+{t:"test",q:"a = [5, 8, 2]. Що виведе print(a[1])?",o:["5","8","2","Помилку"],a:1,e:"Індексація починається з 0, тому a[1] — це 8."},
+{t:"fill",hard:1,q:"Додайте елемент у кінець списку та виведіть кількість елементів.",c:"fruits = [\"яблуко\", \"груша\"]\nfruits.___(\"слива\")\nprint(___(fruits))",a:[["append"],["len"]],h:"1-й пропуск — одне з: append, add, insert, push. 2-й — одне з: len, count, size, length.",e:"append() додає елемент, len() рахує кількість."}]},
+{n:24,t:"Функції. Turtle",k:[
+{t:"test",q:"Яка команда Turtle піднімає перо, щоб черепашка рухалась без малювання?",o:["pendown()","penup()","hideturtle()","circle()"],a:1,e:"penup() піднімає перо, pendown() опускає."},
+{t:"bug",hard:1,q:"Функція має намалювати квадрат. Знайдіть рядок з помилкою.",c:"import turtle\ndef square(size):\n    for i in range(4):\n        turtle.forward(size)\n        turtle.left(90)\nsquare()",a:5,h:"Порівняйте параметри функції з її викликом.",e:"Функція очікує size, а виклик square() не передає аргумент, напр. square(100)."}]},
+{n:25,t:"Списки. Словники",k:[
+{t:"multi",q:"d = {\"a\": 1, \"b\": 2}. Які вирази повернуть 2? (оберіть усі)",o:["d[\"b\"]","d.get(\"b\")","d[2]","d[\"a\"]"],a:[0,1],e:"Доступ у словнику — за ключем: d[\"b\"] або d.get(\"b\")."},
+{t:"fill",hard:1,q:"Додайте учня Петро (13 років) і виведіть лише імена.",c:"ages = {\"Оля\": 14, \"Іван\": 15}\nages[\"Петро\"] = ___\nfor name in ages.___():\n    print(name)",a:[["13"],["keys"]],h:"1-й пропуск — просто число. 2-й — метод словника, одне з: keys, values, items, get.",e:"ages[\"Петро\"] = 13; ages.keys() — ключі."}]},
+{n:26,t:"Основи криптографії",k:[
+{t:"test",q:"Шифр Цезаря зі зсувом 3. У що перетвориться літера A?",o:["B","C","D","Z"],a:2,e:"A → B → C → D."},
+{t:"fill",hard:1,q:"Допишіть шифрування літери зі зсувом 3.",c:"code = ___(ch) + 3\nletter = ___(code)",a:[["ord"],["chr"]],h:"Оберіть дві з: ord, chr, int, str, ascii, code. Одна дає код символу, інша — символ за кодом.",e:"ord() — символ у код, chr() — код у символ."}]},
+{n:27,t:"Графічні інтерфейси Tkinter",k:[
+{t:"test",q:"Який метод запускає головний цикл обробки подій вікна tkinter?",o:["root.pack()","root.start()","root.mainloop()","root.run()"],a:2,e:"root.mainloop() тримає вікно відкритим і обробляє події."},
+{t:"bug",hard:1,q:"Кнопка спрацьовує одразу при запуску, а не по натисканню. Знайдіть рядок з помилкою.",c:"import tkinter as tk\nroot = tk.Tk()\nbtn = tk.Button(root, text=\"Натисни\", command=say_hi())\nbtn.pack()\nroot.mainloop()",a:2,h:"Що відбувається, коли після назви функції стоять дужки?",e:"command=say_hi — передаємо функцію без дужок, інакше вона викликається одразу."}]},
+{n:28,t:"Проєкт: Pygame Zero",k:[
+{t:"test",q:"Яка функція в Pygame Zero автоматично малює кожен кадр?",o:["show()","draw()","paint()","frame()"],a:1,e:"Pygame Zero сам викликає draw() і update()."},
+{t:"multi",q:"Які твердження про Pygame Zero правильні? (оберіть усі)",o:["update() оновлює стан гри","WIDTH і HEIGHT задають розмір вікна","draw() потрібно вручну викликати в циклі while","screen.clear() очищає екран"],a:[0,1,3],e:"Цикл гри у Pygame Zero працює автоматично, draw() вручну викликати не треба."}]},
+{n:29,t:"Тестування",k:[
+{t:"test",q:"Що таке тестування програми?",o:["Написання коду","Перевірка роботи програми на різних даних для виявлення помилок","Оформлення коментарів","Збереження файлу"],a:1,e:"Тестування шукає помилки, запускаючи програму на різних вхідних даних."},
+{t:"bug",hard:1,q:"Тест is_even(4) повернув False, а очікувалось True. Знайдіть рядок з помилкою.",c:"def is_even(n):\n    return n % 2 == 1",a:1,h:"Яка остача від ділення на 2 у парного числа?",e:"У парного числа n % 2 == 0."}]}];
+const T=[];LV.forEach((l,li)=>l.k.forEach(k=>T.push({...k,li})));
+const MAX=T.length*10;let S={name:"",cls:"",i:0,xp:0,log:[],done:0,hint:0,sel:[]};
+const $=x=>document.getElementById(x),A=$("app"),esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function start(){A.innerHTML=`<div class="card"><h1>🚀 Квест «Алгоритмізація і програмування»</h1><input type="text" id="nm" placeholder="Ім'я та прізвище"><input type="text" id="cl" placeholder="Клас (наприклад, 9-А)"><button onclick="go()">Почати квест</button></div>`}
+function go(){const n=$("nm").value.trim(),c=$("cl").value.trim();if(!n||!c)return alert("Введіть ім'я та клас");S.name=n;S.cls=c;show()}
+function show(){if(S.i>=T.length)return fin();const t=T[S.i],l=LV[t.li];S.done=0;S.hint=0;S.sel=[];
+let b="";
+if(t.t=="test"||t.t=="multi")b=t.o.map((o,j)=>`<button class="opt" id="o${j}" onclick="pick(${j})">${esc(o)}</button>`).join("")+(t.t=="multi"?`<button onclick="chk()">Перевірити</button>`:"");
+if(t.t=="fill"){let p=t.c.split("___"),h=p[0];for(let j=1;j<p.length;j++)h+=`<input type="text" id="f${j-1}" autocomplete="off">`+p[j];b=`<pre>${h.split(/(<input[^>]*>)/).map((x,j)=>j%2?x:esc(x)).join("")}</pre><button onclick="chk()">Перевірити</button>`}
+if(t.t=="bug")b=`<pre>${t.c.split("\n").map((r,j)=>`<span class="ln" id="l${j}" onclick="bug(${j})">${j+1}  ${esc(r)}</span>`).join("")}</pre>`;
+A.innerHTML=`<div class="card"><div class="top"><span>${l.t}</span><span class="xp">⭐ ${S.xp} XP</span></div><div class="bar"><i style="width:${S.i/T.length*100}%"></i></div>
+<span class="tag">Завдання ${S.i+1}/${T.length}</span><span class="tag">${{test:"Тест",multi:"Кілька відповідей",fill:"Допишіть код",bug:"Знайдіть помилку"}[t.t]}</span>${t.hard?'<span class="tag hard">складне</span>':""}
+<h3>${esc(t.q)}</h3>${b}<div id="hb"></div>${t.hard?`<button class="g" id="hbtn" onclick="hint()">💡 Підказка (−5 XP)</button>`:""}<div id="fb"></div></div>`}
+function hint(){if(S.done||S.hint)return;if(S.xp<5)return alert("Недостатньо XP для підказки");S.hint=1;S.xp-=5;$("hbtn").disabled=true;$("hb").innerHTML=`<div class="hint">💡 ${T[S.i].h}</div>`;upd()}
+function upd(){document.querySelector(".xp").textContent="⭐ "+S.xp+" XP"}
+function pick(j){const t=T[S.i];if(S.done)return;if(t.t=="test")return res(j==t.a?10:-5,j==t.a?"ok":"er",[j],[t.a]);
+const k=S.sel.indexOf(j);k<0?S.sel.push(j):S.sel.splice(k,1);$("o"+j).classList.toggle("sel")}
+function bug(j){const t=T[S.i];if(S.done)return;S.done=1;$("l"+j).classList.add(j==t.a?"ok":"bad");$("l"+t.a).classList.add("ok");fb(j==t.a?10:-5,j==t.a?"ok":"er")}
+function chk(){const t=T[S.i];if(S.done)return;
+if(t.t=="multi"){const r=S.sel.filter(x=>t.a.includes(x)).length,w=S.sel.length-r;let d=-5,c="er";if(w==0&&r==t.a.length){d=10;c="ok"}else if(w==0&&r>0){d=5;c="wa"}
+return res(d,c,S.sel,t.a)}
+let r=0;t.a.forEach((al,j)=>{const v=$("f"+j).value.trim().toLowerCase().replace(/\(\)$/,"");const ok=al.includes(v);$("f"+j).style.background=ok?"#17614a":"#7a2236";if(ok)r++});
+fb(r==t.a.length?10:r>0?5:-5,r==t.a.length?"ok":r>0?"wa":"er",r==t.a.length?"":"Правильно: "+t.a.map(x=>x[0]).join(", ")+".")}
+function res(d,c,s,a){S.done=1;T[S.i].o.forEach((_,j)=>{const e=$("o"+j);if(a.includes(j))e.classList.add("ok");else if(s.includes(j))e.classList.add("bad")});fb(d,c)}
+function fb(d,c,x=""){S.done=1;S.xp=Math.max(0,S.xp+d);S.log.push({li:T[S.i].li,d});upd();
+$("fb").innerHTML=`<div class="fb ${c}"><b>${d>0?"+":""}${d} XP</b> — ${{ok:"Чудово!",wa:"Частково правильно.",er:"Ой, помилка."}[c]} ${x} ${esc(T[S.i].e)}</div><button onclick="S.i++;show()">${S.i==T.length-1?"Завершити":"Далі →"}</button>`;
+document.querySelectorAll(".opt,.ln").forEach(e=>e.style.pointerEvents="none")}
+function fin(){const full=S.log.filter(x=>x.d==10).length,part=S.log.filter(x=>x.d==5).length,wr=T.length-full-part,gr=Math.max(1,Math.round(12*(full+part/2)/T.length));const p=S.xp/MAX,rk=p>=.85?"🏆 Майстер коду":p>=.6?"💻 Програміст":p>=.35?"🔧 Практик":"🌱 Новачок";
+let rows="",rep=`Квест: Алгоритмізація і програмування (9 клас)\n${S.name}, ${S.cls}\nОцінка: ${gr} з 12 (правильних: ${full}, частково: ${part}, неправильних: ${wr})\nXP: ${S.xp} з ${MAX} — ${rk}\n`;
+LV.forEach((l,li)=>{const g=S.log.filter(x=>x.li==li),s=g.reduce((a,x)=>a+x.d,0);rows+=`<tr><td>${l.t}</td><td>${s} XP</td></tr>`;rep+=`${l.t}: ${s} XP\n`});
+window.REP=rep;A.innerHTML=`<div class="card"><h1>🎉 Квест завершено!</h1><p>${esc(S.name)}, ${esc(S.cls)}</p><div style="font-size:3.2rem;font-weight:800;color:var(--ok)">${gr} <span style="font-size:1.2rem;color:var(--mu)">з 12</span></div><p>Правильних: ${full} · частково: ${part} · неправильних: ${wr}</p><div class="xp">⭐ ${S.xp} з ${MAX} XP</div><h2>${rk}</h2><div class="bar"><i style="width:${p*100}%"></i></div><table>${rows}</table><div id="pr" onclick="pred()" style="cursor:pointer;margin:16px 0;padding:16px;border-radius:12px;text-align:center;background:linear-gradient(135deg,#3a2a7a,#1d4a7a);border:1px dashed var(--wa)">🔮 Натисни, щоб відкрити своє передбачення</div><button onclick="navigator.clipboard.writeText(REP).then(()=>alert('Звіт скопійовано'))">Скопіювати звіт</button><button class="g" onclick="print()">Друк</button><button class="g" onclick="location.reload()">Спробувати знову</button></div>`}
+const PR=["Буде успіх у тебе, як і нові друзі. Шкільні пригоди чекають, передбачення не брешуть.", "Не варто витрачати час і сили на дрібниці, потрібно думати про головне — оцінки та знання.", "Кожна контрольна чи домашня справа вимагає завершення.", "Дивись по сторонах на уроці, і ти не пропустиш важливе пояснення вчителя.", "Частіше посміхайся однокласникам, рідше засуджуйся через складні завдання.", "Будьте уважні до підказок у підручнику та натхнення на перерві.", "Чекай на несподіваний подарунок або приємний сюрприз від друга по парті.", "Вір у дива на іспитах, смійся частіше і мрій про канікули.", "Будь-яке складне завдання починається з віри в себе.", "Прагніть до успіху і виглядайте так, немов ви його вже досягли.", "Частіше зізнавайтеся батькам у своїх успіхах, і станеться щось чудове.", "Подорож на екскурсію з класом вже зовсім близько.", "Учитель замишляє щось цікаве та захопливе для вас.", "Хочеш знайти новий підхід до предмету — прямо зараз забудь про старі сумніви.", "Поки ти сам не здашся перед складною задачею, ніхто тебе не переможе.", "Тобі насниться віщий сон із правильними відповідями сьогодні вночі.", "Сьогодні тебе очікує чудова новина про скасування самостійної.", "Удача допоможе вам пережити всі важкі дні перед канікулами.", "Ви завоюєте успіх у навчанні та творчості."];
+function pred(){const e=$("pr");if(S.p)return;S.p=PR[Math.floor(Math.random()*PR.length)];e.style.cursor="default";e.innerHTML="🔮 <i>"+S.p+"</i>"}
+start();
+</script></body></html>
