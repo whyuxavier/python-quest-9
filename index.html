@@ -63,8 +63,8 @@ if(t.t=="fill"){let p=t.c.split("___"),h=p[0];for(let j=1;j<p.length;j++)h+=`<in
 if(t.t=="bug")b=`<pre>${t.c.split("\n").map((r,j)=>`<span class="ln" id="l${j}" onclick="bug(${j})">${j+1}  ${esc(r)}</span>`).join("")}</pre>`;
 A.innerHTML=`<div class="card"><div class="top"><span>${l.t}</span><span class="xp">⭐ ${S.xp} XP</span></div><div class="bar"><i style="width:${S.i/T.length*100}%"></i></div>
 <span class="tag">Завдання ${S.i+1}/${T.length}</span><span class="tag">${{test:"Тест",multi:"Кілька відповідей",fill:"Допишіть код",bug:"Знайдіть помилку"}[t.t]}</span>${t.hard?'<span class="tag hard">складне</span>':""}
-<h3>${esc(t.q)}</h3>${b}<div id="hb"></div>${t.hard?`<button class="g" id="hbtn" onclick="hint()">💡 Підказка (−5 XP)</button>`:""}<div id="fb"></div></div>`}
-function hint(){if(S.done||S.hint)return;if(S.xp<5)return alert("Недостатньо XP для підказки");S.hint=1;S.xp-=5;$("hbtn").disabled=true;$("hb").innerHTML=`<div class="hint">💡 ${T[S.i].h}</div>`;upd()}
+<h3>${esc(t.q)}</h3>${b}<div id="hb"></div>${t.hard?`<button class="g" id="hbtn" onclick="hint()">💡 Підказка (−3 XP)</button>`:""}<div id="fb"></div></div>`}
+function hint(){if(S.done||S.hint)return;if(S.xp<5)return alert("Недостатньо XP для підказки");S.hint=1;S.xp-=3;$("hbtn").disabled=true;$("hb").innerHTML=`<div class="hint">💡 ${T[S.i].h}</div>`;upd()}
 function upd(){document.querySelector(".xp").textContent="⭐ "+S.xp+" XP"}
 function pick(j){const t=T[S.i];if(S.done)return;if(t.t=="test")return res(j==t.a?10:-5,j==t.a?"ok":"er",[j],[t.a]);
 const k=S.sel.indexOf(j);k<0?S.sel.push(j):S.sel.splice(k,1);$("o"+j).classList.toggle("sel")}
