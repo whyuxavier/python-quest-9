@@ -75,6 +75,11 @@ button,input{font:inherit}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--pr) 45%,transparent);outline-offset:2px}
 
 /* ---------- старт ---------- */
+.start1{max-width:560px;margin:0 auto;padding-top:28px}
+.start1 h1{margin-bottom:6px}
+.start1 .form{margin-top:22px;gap:14px}
+.start1 .err{text-align:left;font-size:14px}
+.btn.go{background:#ffd43b;color:#0d1117}.btn.go:hover{background:#ffe066}
 .start{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:48px;align-items:center;min-height:calc(100vh - 60px - 56px)}
 h1{margin:0 0 8px;font:700 clamp(26px,3.4vw,38px)/1.12 var(--fd);letter-spacing:-.01em}
 h1 em{font-style:normal;color:var(--pr)}
@@ -121,7 +126,12 @@ h1 em{font-style:normal;color:var(--pr)}
 
 /* ---------- квест ---------- */
 .quest{max-width:760px;margin:6px auto 0}
-.lvbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.lvbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.qcells{display:flex;gap:4px;margin-bottom:16px}
+.qcells i{flex:1;height:12px;border-radius:4px;background:var(--sf2);border:1px solid var(--ln);transition:background .25s,border-color .25s}
+.qcells i.ok{background:var(--ok);border-color:var(--ok)}
+.qcells i.no{background:var(--yl);border-color:var(--yl)}
+.qcells i.c{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr-soft)}
 .lvt{min-width:0;flex:1}
 .lvt small{display:block;color:var(--mu);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
 .lvt b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -161,7 +171,8 @@ h1 em{font-style:normal;color:var(--pr)}
 .code input:focus{border-style:solid;background:#ffd43b26}
 .code input.ok{border:1px solid #34c06f;background:rgba(52,192,111,.22);color:#b4f5cc}
 .code input.bad{border:1px solid #ef5350;background:rgba(239,83,80,.22);color:#ffc2c0}
-.code .k{color:var(--c-kw)}.code .fn{color:var(--c-fn)}.code .s{color:var(--c-st)}.code .n{color:var(--c-nu)}.code .cm{color:var(--ed-mu);font-style:italic}
+.code .k{color:var(--c-kw)}
+.code.pv{margin:2px 0 4px;padding:10px 0;font-size:14px;line-height:1.75}.code .fn{color:var(--c-fn)}.code .s{color:var(--c-st)}.code .n{color:var(--c-nu)}.code .cm{color:var(--ed-mu);font-style:italic}
 
 .acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .hint{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--wa-s);color:var(--tx);font-weight:600;line-height:1.45;border-left:4px solid var(--wa)}
@@ -385,7 +396,7 @@ $("snd").onclick=()=>{sndOn=!sndOn;try{localStorage.setItem("pq9-sound",sndOn?"o
 /* ---------- тема ---------- */
 function theme(t){const d=t=="dark";document.body.classList.toggle("dark",d);$("themeBtn").textContent=d?"☀":"☾";$("themeBtn").title=d?"Світла тема":"Темна тема";try{localStorage.setItem("pq9-theme",t)}catch(e){}}
 let th=null;try{th=localStorage.getItem("pq9-theme")}catch(e){}
-theme(th||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+theme(th||"dark");
 $("themeBtn").onclick=()=>theme(document.body.classList.contains("dark")?"light":"dark");
 
 /* ---------- [i] ---------- */
@@ -434,28 +445,28 @@ const HERO=`<svg class="hero-svg" viewBox="0 0 540 430" aria-hidden="true">
   </g>
 </svg>`;
 
+const NAMES=['Ярослав Мудрий','Леся Українка','Тарас Шевченко','Іван Франко','Віктор Глушков','Катерина Ющенко','Сергій Корольов','Ігор Сікорський','Іван Пулюй','Ада Лавлейс','Алан Тюрінг','Ліна Костенко','Марія Примаченко','Григорій Сковорода','Михайло Грушевський','Нікола Тесла','Тім Бернерс-Лі','Грейс Гоппер','Леонід Каденюк','Олександр Довженко','Соломія Крушельницька','Микола Амосов','Борис Патон','Марія Кюрі','Гвідо ван Россум'];
+function pickName(){let last='';try{last=localStorage.getItem('fame-python-quest-9')||''}catch(e){}const pool=NAMES.filter(n=>n!==last),n=pool[Math.floor(Math.random()*pool.length)];try{localStorage.setItem('fame-python-quest-9',n)}catch(e){}return n}
 function start(){
-  $("xpc").hidden=true;
-  A.innerHTML=`<section class="start">
-  <div>
-    <h1>Підсумковий квест: <em>Python</em>, 9 клас</h1>
-    <p class="sub">Проходь рівні, збирай XP і отримай оцінку.</p>
-    <div class="meta"><span>${LV.length} рівнів</span><span>${T.length} завдань</span><span>до ${MAX} XP</span></div>
+  $("xpc").hidden=true;const PH=pickName().split(" "),PF=PH[0],PL=PH.slice(1).join(" ");
+  A.innerHTML=`<section class="start1">
+    <h1>Python-квест</h1>
+    <p class="sub">Пройди ${LV.length} рівнів: тести, кілька відповідей, дописування коду й пошук помилок.</p>
     <div class="card form">
-      <div class="fr">
-        <label class="field">Ім'я та прізвище<input type="text" id="nm" autocomplete="name"></label>
-        <label class="field">Клас<input type="text" id="cl" placeholder="9-А"></label>
-      </div>
-      <div class="note"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Виходи зі сторінки та спроби Google Лінзи фіксуються у звіті.</div>
-      <button class="btn wide" id="goBtn" onclick="go()">▶ Почати квест</button>
+      <label class="field">Ім'я<input type="text" id="fn" autocomplete="given-name" maxlength="30" placeholder="${esc(PF)}"></label>
+      <label class="field">Прізвище<input type="text" id="ln" autocomplete="family-name" maxlength="30" placeholder="${esc(PL)}"></label>
+      <label class="field">Клас<input type="text" id="cl" maxlength="6" placeholder="9-А"></label>
+      <pre class="code pv" id="pv" aria-live="polite"></pre>
       <div class="err" id="err"></div>
+      <button class="btn wide go" id="goBtn" onclick="go()">Почати квест</button>
     </div>
-  </div>
-  <div>${HERO}</div>
-</section>`;
-  setTimeout(()=>{if(matchMedia("(pointer:fine)").matches)$("nm").focus()},50);
+  </section>`;
+  const pv=()=>{const n=[$("fn").value.trim()||PF,$("ln").value.trim()||PL].filter(Boolean).join(" "),c=$("cl").value.trim()||"9-А";
+    $("pv").innerHTML=`<span class="row"><span class="gut">1</span><span>name <span class="k">=</span> <span class="s">"${esc(n)}"</span></span></span><span class="row"><span class="gut">2</span><span>klas <span class="k">=</span> <span class="s">"${esc(c)}"</span></span></span><span class="row"><span class="gut">3</span><span><span class="k">print</span>(<span class="s">"Привіт,"</span>, name, klas)</span></span>`};
+  ["fn","ln","cl"].forEach(i=>{$(i).addEventListener("input",pv);$(i).addEventListener("keydown",ev=>{if(ev.key=="Enter")go()})});pv();
+  setTimeout(()=>{if(matchMedia("(pointer:fine)").matches)$("fn").focus()},50);
 }
-function go(){const n=$("nm").value.trim(),c=$("cl").value.trim();if(!n||!c){$("err").textContent="Введіть ім'я та клас";beep("er");return}S.name=n;S.cls=c;HC.reset();HC.start();$("xpc").hidden=false;upd();show();scrollTo(0,0)}
+function go(){const f=$("fn").value.trim(),l=$("ln").value.trim(),c=$("cl").value.trim();if(!f||!l||!c){$("err").textContent="Заповни ім’я, прізвище та клас, щоб почати.";beep("er");return}const n=f+" "+l;S.name=n;S.cls=c;HC.reset();HC.start();$("xpc").hidden=false;upd();show();scrollTo(0,0)}
 
 const TYPE={test:"Тест",multi:"Кілька відповідей",fill:"Допишіть код",bug:"Знайдіть помилку"};
 function show(){if(S.i>=T.length)return fin();const t=T[S.i],l=LV[t.li];S.done=0;S.hint=0;S.sel=[];
@@ -465,10 +476,10 @@ if(t.t=="test"||t.t=="multi"){
 }
 if(t.t=="fill"){let k=0;b=`<pre class="code">${t.c.split("\n").map((r,j)=>`<span class="row"><span class="gut">${j+1}</span><span>${r.split("___").map(hl).reduce((a,x)=>a+`<input type="text" id="f${k++}" autocomplete="off" spellcheck="false" aria-label="Пропуск ${k}">`+x)}</span></span>`).join("")}</pre><div class="acts2"><button class="btn" id="chkBtn" onclick="chk()">Перевірити</button></div>`}
 if(t.t=="bug")b=`<pre class="code">${t.c.split("\n").map((r,j)=>`<span class="ln" id="l${j}" onclick="bug(${j})"><span class="gut">${j+1}</span><span>${hl(r)||" "}</span></span>`).join("")}</pre>`;
-const lv=LV.map((x,k)=>`<i class="${k<t.li?"d":k==t.li?"c":""}" title="Урок ${x.n}: ${x.t}">${x.n}</i>`).join("");
+const cells=T.map((_,k)=>{const g=S.log[k];return `<i id="c${k}" class="${g?(g.d==10?"ok":"no"):k==S.i?"c":""}"></i>`}).join("");
 A.innerHTML=`<section class="quest">
-  <div class="lvbar"><div class="lvt"><small>Урок ${l.n}</small><b>${l.t}</b></div><div class="lvs">${lv}</div></div>
-  <div class="prog"><i style="width:${S.i/T.length*100}%"></i></div>
+  <div class="lvbar"><div class="lvt"><b>${l.t}</b></div></div>
+  <div class="qcells">${cells}</div>
   <div class="card">
     <div class="task-top"><span class="chip">${TYPE[t.t]}</span>${t.hard?'<span class="chip hard">складне</span>':""}<span class="tn">${S.i+1} / ${T.length}</span></div>
     <h2 class="q">${esc(t.q)}</h2>${b}
@@ -489,7 +500,7 @@ return res(d,c,S.sel,t.a)}
 let r=0;t.a.forEach((al,j)=>{const e=$("f"+j),v=e.value.trim().toLowerCase().replace(/\(\)$/,"");const ok=al.includes(v);e.classList.add(ok?"ok":"bad");e.readOnly=true;if(ok)r++});
 fb(r==t.a.length?10:r>0?5:-5,r==t.a.length?"ok":r>0?"wa":"er",r==t.a.length?"":"Правильно: "+t.a.map(x=>x[0]).join(", ")+".")}
 function res(d,c,s,a){S.done=1;T[S.i].o.forEach((_,j)=>{const e=$("o"+j);if(a.includes(j))e.classList.add("ok");else if(s.includes(j))e.classList.add("bad")});fb(d,c)}
-function fb(d,c,x=""){S.done=1;S.xp=Math.max(0,S.xp+d);S.log.push({li:T[S.i].li,d});upd(d);beep(c);
+function fb(d,c,x=""){S.done=1;S.xp=Math.max(0,S.xp+d);S.log.push({li:T[S.i].li,d});{const ce=$("c"+S.i);if(ce)ce.className=d==10?"ok":"no"}upd(d);beep(c);
 const cb=$("chkBtn");if(cb)cb.remove();const hb=$("hbtn");if(hb)hb.parentNode.remove();
 $("fb").innerHTML=`<div class="fb ${c}"><div class="fb-h"><b>${d>0?"+":""}${d} XP</b>${{ok:"Чудово!",wa:"Частково правильно",er:"Ой, помилка"}[c]}</div><p>${esc(x)} ${esc(T[S.i].e)}</p></div><button class="btn next" id="nextBtn" onclick="S.i++;show();scrollTo(0,0)">${S.i==T.length-1?"Завершити":"Далі →"}</button>`;
 document.querySelectorAll(".opt,.ln").forEach(e=>e.style.pointerEvents="none");
