@@ -445,25 +445,25 @@ const HERO=`<svg class="hero-svg" viewBox="0 0 540 430" aria-hidden="true">
   </g>
 </svg>`;
 
-const NAMES=[''];
-function pickName(){let last='';try{last=localStorage.getItem('fame-python-quest-9')||''}catch(e){}const pool=NAMES.filter(n=>n!==last),n=pool[Math.floor(Math.random()*pool.length)];try{localStorage.setItem('fame-python-quest-9',n)}catch(e){}return n}
 function start(){
-  $("xpc").hidden=true;const PH=pickName().split(" "),PF=PH[0],PL=PH.slice(1).join(" ");
+  $("xpc").hidden=true;
   A.innerHTML=`<section class="start1">
     <h1>Python-квест</h1>
     <p class="sub">Пройди ${LV.length} рівнів: тести, кілька відповідей, дописування коду й пошук помилок.</p>
     <div class="card form">
-      <label class="field">Ім'я<input type="text" id="fn" autocomplete="given-name" maxlength="30" placeholder="${esc(PF)}"></label>
-      <label class="field">Прізвище<input type="text" id="ln" autocomplete="family-name" maxlength="30" placeholder="${esc(PL)}"></label>
-      <label class="field">Клас<input type="text" id="cl" maxlength="6" placeholder=" "></label>
+      <label class="field">Ім'я<input type="text" id="fn" autocomplete="given-name" maxlength="30"></label>
+      <label class="field">Прізвище<input type="text" id="ln" autocomplete="family-name" maxlength="30"></label>
+      <label class="field">Клас<input type="text" id="cl" maxlength="6"></label>
       <pre class="code pv" id="pv" aria-live="polite"></pre>
       <div class="err" id="err"></div>
       <button class="btn wide go" id="goBtn" onclick="go()">Почати квест</button>
     </div>
   </section>`;
-  const pv=()=>{const n=[$("fn").value.trim()||PF,$("ln").value.trim()||PL].filter(Boolean).join(" "),c=$("cl").value.trim()||"9-А";
-    $("pv").innerHTML=`<span class="row"><span class="gut">1</span><span>name <span class="k">=</span> <span class="s">"${esc(n)}"</span></span></span><span class="row"><span class="gut">2</span><span>grade <span class="k">=</span> <span class="s">"${esc(c)}"</
-    span></span></span><span class="row"><span class="gut">3</span><span><span class="k">print</span>(<span class="s">"Привіт,"</span>, name, grade)</span></span>`};
+  const pv=()=>{const n=[$("fn").value.trim(),$("ln").value.trim()].filter(Boolean).join(" "),c=$("cl").value.trim();
+    const row=(k,h)=>`<span class="row"><span class="gut">${k}</span><span>${h}</span></span>`;
+    $("pv").innerHTML=row(1,`name <span class="k">=</span> <span class="s">"${esc(n)}"</span>`)
+      +row(2,`grade <span class="k">=</span> <span class="s">"${esc(c)}"</span>`)
+      +row(3,`<span class="k">print</span>(<span class="s">"Привіт,"</span>, name, grade)`)};
   ["fn","ln","cl"].forEach(i=>{$(i).addEventListener("input",pv);$(i).addEventListener("keydown",ev=>{if(ev.key=="Enter")go()})});pv();
   setTimeout(()=>{if(matchMedia("(pointer:fine)").matches)$("fn").focus()},50);
 }
